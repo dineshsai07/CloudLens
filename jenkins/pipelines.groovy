@@ -2,18 +2,22 @@ pipeline {
   agent any
 
   stages {
+    stage('Prepare Python') {
+      steps {
+        // Install Python3 and pip inside the Jenkins container
+        sh '''
+          apt-get update -y
+          apt-get install -y python3 python3-pip
+        '''
+      }
+    }
+
     stage('Detect Resource Waste') {
       steps {
+        // Install Python deps and run the detector
         sh '''
-          # Pull the Python image
-          docker pull python:3.9-slim
-
-          # Run cleanup-detector.py inside a throwaway container
-          docker run --rm \
-            -v "$WORKSPACE":/app \
-            -w /app \
-            python:3.9-slim \
-            /bin/sh -c "pip3 install requests && python3 scripts/cleanup-detector.py http://prometheus:9090 20 8"
+          pip3 install --upgrade pip requests
+          python3 scripts/cleanup-detector.py http://prometheus:9090 20 8
         '''
       }
     }
