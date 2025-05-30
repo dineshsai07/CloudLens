@@ -1,5 +1,4 @@
-# .github/workflows/cleanup.yml
-name: CloudLens Cleanup
+name: CloudLens-Cleanup
 
 on:
   workflow_dispatch:
