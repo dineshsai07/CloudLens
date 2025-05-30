@@ -1,0 +1,55 @@
+# .github/workflows/cleanup.yml
+name: CloudLens Cleanup
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/15 * * * *'
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+
+    services:
+      prometheus:
+        image: prom/prometheus:latest
+        # mount your custom config if needed
+        volumes:
+          - ./docker-compose/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+        ports:
+          - 9090:9090
+        options: >-
+          --health-cmd="wget -qO- http://localhost:9090/metrics || exit 1"
+          --health-interval=10s
+          --health-timeout=5s
+
+      cost-simulator:
+        image: python:3.9-slim
+        command: >
+          sh -c "pip install prometheus_client &&
+                 python /home/runner/work/CloudLens/scripts/cost-simulator.py"
+        ports:
+          - 8000:8000
+        options: >-
+          --health-cmd="wget -qO- http://localhost:8000/metrics || exit 1"
+          --health-interval=10s
+          --health-timeout=5s
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with: python-version: '3.x'
+
+      - name: Run cleanup-detector
+        run: |
+          pip install requests
+          python scripts/cleanup-detector.py http://localhost:9090 20 8 > cleanup-report.txt
+
+      - name: Create issue on anomalies
+        if: ${{ always() && (steps.detect.outputs.exitcode != 0) }}
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: '🚨 CloudLens Cleanup Anomalies'
+          content-filepath: cleanup-report.txt
+          token: ${{ secrets.GITHUB_TOKEN }}
