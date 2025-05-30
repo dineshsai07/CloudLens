@@ -20,7 +20,7 @@ jobs:
         run: python scripts/cleanup-detector.py http://prometheus:9090 20 8 > cleanup-report.txt
       - name: Create issue on anomalies
         if: ${{ ! contains( steps.detect.outputs.report, 'No immediate cleanup actions' ) }}
-        uses: peter-evans/create-issue-from-file@v6
+        uses: peter-evans/create-issue-from-file@v5
         with:
           title: '🚨 CloudLens Cleanup Anomalies'
           content-filepath: cleanup-report.txt
