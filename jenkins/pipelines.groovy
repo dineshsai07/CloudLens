@@ -3,12 +3,7 @@ pipeline {
    * Runs all stages inside the official Python image,
    * which already includes python3 and pip.
    */
-  agent {
-    docker {
-      image 'python:3.9-slim'
-      args  '-u root:root -v /var/run/docker.sock:/var/run/docker.sock'
-    }
-  }
+  agent any
 
   stages {
     stage('Detect Resource Waste') {
