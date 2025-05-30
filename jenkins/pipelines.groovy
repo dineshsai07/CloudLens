@@ -4,21 +4,18 @@ pipeline {
   stages {
     stage('Prepare Python') {
       steps {
-        // Install Python3 and pip inside the Jenkins container
+        // Install Python3 and the requests library via apt
         sh '''
           apt-get update -y
-          apt-get install -y python3 python3-pip
+          apt-get install -y python3 python3-requests
         '''
       }
     }
 
     stage('Detect Resource Waste') {
       steps {
-        // Install Python deps and run the detector
-        sh '''
-          pip3 install --upgrade pip requests
-          python3 scripts/cleanup-detector.py http://prometheus:9090 20 8
-        '''
+        // Run the detector (requests is already available)
+        sh 'python3 scripts/cleanup-detector.py http://prometheus:9090 20 8'
       }
     }
   }
