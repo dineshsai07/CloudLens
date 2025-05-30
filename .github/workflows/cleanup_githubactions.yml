@@ -1,44 +1,37 @@
-name: CloudLens-Cleanup
+name: CloudLens Cleanup
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '*/15 * * * *'
 
 jobs:
   detect:
     runs-on: ubuntu-latest
-
-    services:
-      prometheus:
-        image: prom/prometheus:latest
-        # mount your custom config if needed
-        volumes:
-          - ./docker-compose/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-        ports:
-          - 9090:9090
-        options: >-
-          --health-cmd="wget -qO- http://localhost:9090/metrics || exit 1"
-          --health-interval=10s
-          --health-timeout=5s
-
-      cost-simulator:
-        image: python:3.9-slim
-        command: >
-          sh -c "pip install prometheus_client &&
-                 python /home/runner/work/CloudLens/scripts/cost-simulator.py"
-        ports:
-          - 8000:8000
-        options: >-
-          --health-cmd="wget -qO- http://localhost:8000/metrics || exit 1"
-          --health-interval=10s
-          --health-timeout=5s
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Start Prometheus
+        run: |
+          docker run -d --name prometheus \
+            -p 9090:9090 \
+            -v ${{ github.workspace }}/docker-compose/prometheus.yml:/etc/prometheus/prometheus.yml:ro \
+            prom/prometheus:latest
+
+      - name: Start Cost Simulator
+        run: |
+          docker run -d --name cost-simulator \
+            -p 8000:8000 \
+            -v ${{ github.workspace }}/scripts:/app:ro \
+            python:3.9-slim \
+            sh -c "pip install prometheus_client && python /app/cost-simulator.py"
+
+      - name: Wait for services to warm up
+        run: sleep 15
+
       - name: Set up Python
         uses: actions/setup-python@v4
-        with: python-version:'3.x'
+        with:
+          python-version: '3.x'
 
       - name: Run cleanup-detector
         run: |
@@ -46,7 +39,7 @@ jobs:
           python scripts/cleanup-detector.py http://localhost:9090 20 8 > cleanup-report.txt
 
       - name: Create issue on anomalies
-        if: ${{ always() && (steps.detect.outputs.exitcode != 0) }}
+        if: failure()
         uses: peter-evans/create-issue-from-file@v5
         with:
           title: '🚨 CloudLens Cleanup Anomalies'
