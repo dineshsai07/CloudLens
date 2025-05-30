@@ -1,0 +1,39 @@
+{
+  "uid": "cloudlens-metrics",
+  "title": "CloudLens Metrics",
+  "schemaVersion": 34,
+  "version": 1,
+  "refresh": "15s",
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "gauge",
+      "title": "Resource Cost ($)",
+      "gridPos": { "x": 0, "y": 0, "w": 8, "h": 6 },
+      "targets": [
+        { "expr": "cloudlens_resource_cost_dollars", "legendFormat": "{{resource}}", "refId": "A" }
+      ],
+      "fieldConfig": {
+        "defaults": { "min": 0, "max": 10 },
+        "overrides": []
+      }
+    },
+    {
+      "id": 2,
+      "type": "gauge",
+      "title": "Resource Usage (%)",
+      "gridPos": { "x": 8, "y": 0, "w": 8, "h": 6 },
+      "targets": [
+        { "expr": "cloudlens_resource_usage_percent", "legendFormat": "{{resource}}", "refId": "A" }
+      ],
+      "fieldConfig": {
+        "defaults": { "min": 0, "max": 100 },
+        "overrides": []
+      }
+    }
+  ]
+}
