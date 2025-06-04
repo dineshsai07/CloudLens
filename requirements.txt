@@ -1,0 +1,4 @@
+boto3
+Flask
+azure-identity
+google-auth
