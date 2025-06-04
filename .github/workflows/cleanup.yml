@@ -14,10 +14,10 @@ jobs:
           python-version: '3.x'
       - name: Install deps
         run: pip install prometheus_client requests
-      - name: Run cleanup‐detector
+      - name: Run cleanup-detector
         run: python scripts/cleanup-detector.py http://prometheus:9090 20 8 > cleanup-report.txt
       - name: Create issue on anomalies
-        if: ${{ ! contains( steps.detect.outputs.report, 'No immediate cleanup actions' ) }}
+        if: failure()
         uses: peter-evans/create-issue-from-file@v5
         with:
           title: '🚨 CloudLens Cleanup Anomalies'
