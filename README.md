@@ -22,7 +22,8 @@ An intelligent, open-source platform that proactively optimizes cloud costs, red
    python cloudlens_web.py
    ```
    Then open `http://localhost:5000` in your browser and follow the prompts.
-   The web UI features a sleek gradient theme and displays cost charts that update as you check potential savings.
+The web UI features a sleek gradient theme and displays cost charts that update as you check potential savings.
+It now includes moving clouds, an "About Me" section describing Dinesh Sai Namburu (senior DevOps engineer), and a "Did You Know" section with cloud facts, all wrapped in a modern 2025 aesthetic.
 4. **Run the CLI tool** (optional)
    ```bash
    python scripts/interactive_installer.py
@@ -31,3 +32,5 @@ An intelligent, open-source platform that proactively optimizes cloud costs, red
    ```bash
    python cloudlens.py
    ```
+
+© 2025 CloudLens — Developed by Dinesh Sai Namburu

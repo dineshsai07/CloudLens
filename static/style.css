@@ -26,3 +26,51 @@ html, body {
 .btn-primary:hover {
   background-image: linear-gradient(45deg, #8246e6, #5a5df0);
 }
+
+/* Moving cloud background */
+.clouds {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 150px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.cloud {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 200px;
+  height: 60px;
+  animation: moveClouds 60s linear infinite;
+  filter: blur(2px);
+}
+
+.cloud:nth-child(2) {
+  left: 25%;
+  width: 250px;
+  animation-duration: 45s;
+}
+
+.cloud:nth-child(3) {
+  left: 60%;
+  width: 300px;
+  height: 80px;
+  animation-duration: 50s;
+}
+
+@keyframes moveClouds {
+  from {
+    transform: translateX(-200%);
+  }
+  to {
+    transform: translateX(200%);
+  }
+}
+
+footer {
+  color: #ccd0d5;
+}

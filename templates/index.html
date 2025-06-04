@@ -15,9 +15,14 @@
     </script>
   </head>
   <body>
+    <div class="clouds">
+      <div class="cloud"></div>
+      <div class="cloud"></div>
+      <div class="cloud"></div>
+    </div>
     <div class="container-wrapper">
-    <div class="card-glass">
-    <h1 class="mb-4">CloudLens Installer</h1>
+      <div class="card-glass">
+        <h1 class="mb-4">CloudLens Installer</h1>
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, message in messages %}
@@ -69,5 +74,22 @@
     </form>
     </div>
     </div>
+    <section class="mt-5 text-center" id="about">
+      <h2>About Me</h2>
+      <p>I'm <strong>Dinesh Sai Namburu</strong>, a senior DevOps engineer focused on building efficient and sustainable cloud solutions.</p>
+    </section>
+    <section class="mt-4" id="didyouknow">
+      <div class="container text-center">
+        <h2>Did You Know?</h2>
+        <ul class="list-unstyled">
+          <li>Cloud providers continually lower prices thanks to economies of scale.</li>
+          <li>Autoscaling helps you pay only for what you use.</li>
+          <li>Rightsizing instances can yield savings of over 50%.</li>
+        </ul>
+      </div>
+    </section>
+    <footer class="text-center mt-5 mb-3">
+      &copy; 2025 CloudLens &mdash; Developed by Dinesh Sai Namburu
+    </footer>
   </body>
 </html>
