@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+html, body {
+  height: 100%;
+  background: radial-gradient(circle at top left, #1f253d, #0b1525);
+  color: #f0f2f5;
+  font-family: 'Inter', sans-serif;
+}
+.container-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+.card-glass {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(6px);
+}
+.btn-primary {
+  background-image: linear-gradient(45deg, #5a5df0, #8246e6);
+  border: none;
+}
+.btn-primary:hover {
+  background-image: linear-gradient(45deg, #8246e6, #5a5df0);
+}

@@ -22,7 +22,7 @@ An intelligent, open-source platform that proactively optimizes cloud costs, red
    python cloudlens_web.py
    ```
    Then open `http://localhost:5000` in your browser and follow the prompts.
-   The result screen displays cost charts that update as you check potential savings.
+   The web UI features a sleek gradient theme and displays cost charts that update as you check potential savings.
 4. **Run the CLI tool** (optional)
    ```bash
    python scripts/interactive_installer.py
