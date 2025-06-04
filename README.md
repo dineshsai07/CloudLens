@@ -15,13 +15,18 @@ An intelligent, open-source platform that proactively optimizes cloud costs, red
    ```
 2. **Install Python dependencies**
    ```bash
-   pip install boto3
+   pip install boto3 flask
    ```
-3. **Run the interactive installer**
+3. **Run the interactive installer (web UI)**
+   ```bash
+   python cloudlens_web.py
+   ```
+   Then open `http://localhost:5000` in your browser and follow the prompts.
+4. **Run the CLI tool** (optional)
    ```bash
    python scripts/interactive_installer.py
    ```
-4. **Start CloudLens**
+5. **Start CloudLens from the command line**
    ```bash
    python cloudlens.py
    ```

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>CloudLens Summary</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body class="container py-4">
+    <h1>CloudLens Summary</h1>
+    {% if cost is not none %}
+      <p>Total monthly cost: ${{ '%.2f'|format(cost) }}</p>
+    {% else %}
+      <p>Total monthly cost: N/A</p>
+    {% endif %}
+    <h5>Potential savings:</h5>
+    <ul>
+    {% for item in suggestions %}
+      <li>{{ item }}</li>
+    {% endfor %}
+    </ul>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">Back</a>
+  </body>
+</html>
