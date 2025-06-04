@@ -6,6 +6,12 @@ cloudlens_config.json at the repository root.
 import json
 import os
 
+try:
+    import boto3
+    from botocore.exceptions import BotoCoreError, ClientError
+except ImportError:
+    boto3 = None
+
 CONFIG_FILE = os.path.join(os.path.dirname(__file__), '..', 'cloudlens_config.json')
 
 PROVIDERS = ['aws', 'azure', 'gcp']
@@ -27,6 +33,14 @@ def prompt_credentials(provider):
     if provider == 'aws':
         creds['aws_access_key_id'] = input('AWS Access Key ID: ').strip()
         creds['aws_secret_access_key'] = input('AWS Secret Access Key: ').strip()
+        if boto3:
+            try:
+                boto3.client('sts',
+                             aws_access_key_id=creds['aws_access_key_id'],
+                             aws_secret_access_key=creds['aws_secret_access_key']).get_caller_identity()
+            except (BotoCoreError, ClientError) as exc:
+                print(f'Invalid AWS credentials: {exc}')
+                return prompt_credentials(provider)
     elif provider == 'azure':
         creds['azure_client_id'] = input('Azure Client ID: ').strip()
         creds['azure_secret'] = input('Azure Secret: ').strip()

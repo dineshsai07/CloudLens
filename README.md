@@ -13,11 +13,15 @@ An intelligent, open-source platform that proactively optimizes cloud costs, red
    git clone https://github.com/<your-org>/CloudLens.git
    cd CloudLens
    ```
-2. **Run the interactive installer**
+2. **Install Python dependencies**
+   ```bash
+   pip install boto3
+   ```
+3. **Run the interactive installer**
    ```bash
    python scripts/interactive_installer.py
    ```
-3. **Start CloudLens**
+4. **Start CloudLens**
    ```bash
    python cloudlens.py
    ```
