@@ -15,13 +15,14 @@ An intelligent, open-source platform that proactively optimizes cloud costs, red
    ```
 2. **Install Python dependencies**
    ```bash
-   pip install boto3 flask
+   pip install boto3 flask azure-identity google-auth
    ```
 3. **Run the interactive installer (web UI)**
    ```bash
    python cloudlens_web.py
    ```
    Then open `http://localhost:5000` in your browser and follow the prompts.
+   The result screen displays cost charts that update as you check potential savings.
 4. **Run the CLI tool** (optional)
    ```bash
    python scripts/interactive_installer.py

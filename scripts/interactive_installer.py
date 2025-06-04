@@ -12,6 +12,17 @@ try:
 except ImportError:
     boto3 = None
 
+try:
+    from azure.identity import ClientSecretCredential
+    from azure.core.exceptions import ClientAuthenticationError
+except ImportError:
+    ClientSecretCredential = None  # type: ignore
+
+try:
+    from google.oauth2 import service_account
+except ImportError:
+    service_account = None  # type: ignore
+
 CONFIG_FILE = os.path.join(os.path.dirname(__file__), '..', 'cloudlens_config.json')
 
 PROVIDERS = ['aws', 'azure', 'gcp']
@@ -44,8 +55,28 @@ def prompt_credentials(provider):
     elif provider == 'azure':
         creds['azure_client_id'] = input('Azure Client ID: ').strip()
         creds['azure_secret'] = input('Azure Secret: ').strip()
+        creds['azure_tenant_id'] = input('Azure Tenant ID: ').strip()
+        if ClientSecretCredential:
+            try:
+                cred = ClientSecretCredential(
+                    tenant_id=creds['azure_tenant_id'],
+                    client_id=creds['azure_client_id'],
+                    client_secret=creds['azure_secret'],
+                )
+                cred.get_token('https://management.azure.com/.default')
+            except ClientAuthenticationError as exc:
+                print(f'Invalid Azure credentials: {exc}')
+                return prompt_credentials(provider)
     elif provider == 'gcp':
         creds['gcp_service_account'] = input('Path to GCP service account JSON: ').strip()
+        if service_account:
+            try:
+                service_account.Credentials.from_service_account_file(
+                    creds['gcp_service_account']
+                )
+            except Exception as exc:
+                print(f'Invalid GCP credentials: {exc}')
+                return prompt_credentials(provider)
     return creds
 
 def main():

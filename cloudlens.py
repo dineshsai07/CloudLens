@@ -7,7 +7,11 @@ from cloudlens_core import (
     load_config,
     save_config,
     validate_aws_credentials,
+    validate_azure_credentials,
+    validate_gcp_credentials,
     fetch_aws_monthly_cost,
+    fetch_azure_monthly_cost,
+    fetch_gcp_monthly_cost,
 )
 
 
@@ -17,7 +21,7 @@ def prompt_for_missing(config: dict, key: str, prompt_text: str) -> str:
     return config[key]
 
 
-def show_cost_summary(provider: str, session: Optional['boto3.Session'] = None) -> None:
+def show_cost_summary(provider: str, session: Optional[object] = None) -> None:
     print(f'Fetching current costs for {provider}...')
     total = None
     if provider == 'aws' and session:
@@ -25,6 +29,16 @@ def show_cost_summary(provider: str, session: Optional['boto3.Session'] = None) 
             total = fetch_aws_monthly_cost(session)
         except Exception as exc:  # pragma: no cover - network
             print(f'Failed to query AWS costs: {exc}')
+    elif provider == 'azure' and session:
+        try:
+            total = fetch_azure_monthly_cost(session)
+        except Exception as exc:  # pragma: no cover - network
+            print(f'Failed to query Azure costs: {exc}')
+    elif provider == 'gcp' and session:
+        try:
+            total = fetch_gcp_monthly_cost(session)
+        except Exception as exc:  # pragma: no cover - network
+            print(f'Failed to query GCP costs: {exc}')
 
     if total is not None:
         print(f'Total monthly cost: ${total:.2f}')
@@ -53,10 +67,15 @@ def main() -> None:
     elif provider == 'azure':
         prompt_for_missing(config, 'azure_client_id', 'Azure Client ID: ')
         prompt_for_missing(config, 'azure_secret', 'Azure Secret: ')
-        session = None
+        prompt_for_missing(config, 'azure_tenant_id', 'Azure Tenant ID: ')
+        session = validate_azure_credentials(config)
+        if not session:
+            return
     elif provider == 'gcp':
         prompt_for_missing(config, 'gcp_service_account', 'Path to GCP service account JSON: ')
-        session = None
+        session = validate_gcp_credentials(config)
+        if not session:
+            return
     else:
         session = None
 

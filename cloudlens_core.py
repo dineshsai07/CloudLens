@@ -6,6 +6,18 @@ import datetime
 from typing import Optional
 
 try:
+    from azure.identity import ClientSecretCredential
+    from azure.core.exceptions import ClientAuthenticationError
+except ImportError:  # pragma: no cover - optional dependency
+    ClientSecretCredential = None  # type: ignore
+    ClientAuthenticationError = Exception  # type: ignore
+
+try:
+    from google.oauth2 import service_account
+except ImportError:  # pragma: no cover - optional dependency
+    service_account = None  # type: ignore
+
+try:
     import boto3
     from botocore.exceptions import BotoCoreError, ClientError
 except ImportError:  # pragma: no cover - dependency might not be installed yet
@@ -74,3 +86,49 @@ def fetch_aws_monthly_cost(session: 'boto3.Session') -> float:
     )
     amount = resp['ResultsByTime'][0]['Total']['UnblendedCost']['Amount']
     return float(amount)
+
+
+def fetch_azure_monthly_cost(_credential: 'ClientSecretCredential') -> float:
+    """Stub for fetching Azure monthly cost (returns 0.0)."""
+    # Production code would query Azure Cost Management APIs here
+    return 0.0
+
+
+def fetch_gcp_monthly_cost(_creds: 'service_account.Credentials') -> float:
+    """Stub for fetching GCP monthly cost (returns 0.0)."""
+    # Production code would query GCP Billing APIs here
+    return 0.0
+
+
+def validate_azure_credentials(config: dict) -> Optional['ClientSecretCredential']:
+    """Return Azure credential if valid, otherwise None."""
+    if ClientSecretCredential is None:
+        print('azure-identity is not installed; cannot validate Azure credentials.')
+        return None
+    try:
+        credential = ClientSecretCredential(
+            tenant_id=config.get('azure_tenant_id', 'common'),
+            client_id=config.get('azure_client_id'),
+            client_secret=config.get('azure_secret'),
+        )
+        # Attempt to obtain a token for ARM
+        credential.get_token('https://management.azure.com/.default')
+        return credential
+    except ClientAuthenticationError as exc:  # pragma: no cover - network
+        print(f'Invalid Azure credentials: {exc}')
+        return None
+
+
+def validate_gcp_credentials(config: dict) -> Optional['service_account.Credentials']:
+    """Return service account credentials if valid, otherwise None."""
+    if service_account is None:
+        print('google-auth is not installed; cannot validate GCP credentials.')
+        return None
+    try:
+        creds = service_account.Credentials.from_service_account_file(
+            config.get('gcp_service_account')
+        )
+        return creds
+    except Exception as exc:  # pragma: no cover - filesystem/network
+        print(f'Invalid GCP credentials: {exc}')
+        return None

@@ -4,20 +4,53 @@
     <meta charset="utf-8">
     <title>CloudLens Summary</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body class="container py-4">
     <h1>CloudLens Summary</h1>
     {% if cost is not none %}
-      <p>Total monthly cost: ${{ '%.2f'|format(cost) }}</p>
+      <p>Total monthly cost: $<span id="total">{{ '%.2f'|format(cost) }}</span></p>
     {% else %}
       <p>Total monthly cost: N/A</p>
     {% endif %}
-    <h5>Potential savings:</h5>
-    <ul>
-    {% for item in suggestions %}
-      <li>{{ item }}</li>
-    {% endfor %}
-    </ul>
-    <a href="{{ url_for('index') }}" class="btn btn-secondary">Back</a>
+    <div class="row">
+      <div class="col-md-6">
+        <h5>Potential savings:</h5>
+        <ul class="list-unstyled" id="savings-list">
+        {% for item in suggestions %}
+          <li>
+            <input type="checkbox" class="form-check-input me-1" data-saving="{{ 10 + loop.index*5 }}" onchange="updateChart()">
+            {{ item }} (<span class="text-muted">${{ 10 + loop.index*5 }}</span>)
+          </li>
+        {% endfor %}
+        </ul>
+      </div>
+      <div class="col-md-6">
+        <canvas id="costChart" width="400" height="300"></canvas>
+      </div>
+    </div>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary mt-3">Back</a>
+    <script>
+      const baseCost = parseFloat(document.getElementById('total')?.textContent || '0');
+      const ctx = document.getElementById('costChart');
+      const chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Current', 'Projected'],
+          datasets: [{ label: 'Cost ($)', data: [baseCost, baseCost], backgroundColor: ['#007bff','#28a745'] }]
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+      });
+
+      function updateChart() {
+        let savings = 0;
+        document.querySelectorAll('#savings-list input:checked').forEach(cb => {
+          savings += parseFloat(cb.getAttribute('data-saving'));
+        });
+        const projected = Math.max(baseCost - savings, 0);
+        chart.data.datasets[0].data[1] = projected;
+        chart.update();
+      }
+    </script>
   </body>
 </html>
