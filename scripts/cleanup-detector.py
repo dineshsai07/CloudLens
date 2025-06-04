@@ -32,7 +32,7 @@ def main():
 
     if not low_usage and not high_cost:
         print("✅ No immediate cleanup actions detected.")
-        return
+        return 0
 
     print("\n🛠️  Cleanup Plan:")
     for item in low_usage:
@@ -45,5 +45,7 @@ def main():
         val = item["value"][1]
         print(f" • [{res}] cost ${val} > ${COST_THRESHOLD} → investigate cost anomaly")
 
+    return 1
+
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
